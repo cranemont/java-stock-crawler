@@ -14,8 +14,8 @@ public class StockData { // read stock excel data
 	StockData(){
 		stockDataTreeMap = new TreeMap<String, String>();
 		try {
-			File CosdaqFile = new File("./Cosdaq.xlsx");
-			File CospiFile = new File("./Cospi.xlsx");
+			File CosdaqFile = new File("./kosdaq.xlsx");
+			File CospiFile = new File("./kospi.xlsx");
 			
 			FileInputStream cosdaqStream = new FileInputStream(CosdaqFile);
 			FileInputStream cospiStream = new FileInputStream(CospiFile);
