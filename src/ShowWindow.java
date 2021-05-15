@@ -73,7 +73,7 @@ public class ShowWindow extends JFrame {
 		return split;
 	}
 
-	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
+	private void setUIFont(javax.swing.plaf.FontUIResource f) {
 		java.util.Enumeration keys = UIManager.getDefaults().keys();
 		while (keys.hasMoreElements()) {
 			Object key = keys.nextElement();
