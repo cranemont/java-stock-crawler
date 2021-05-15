@@ -2,6 +2,10 @@ import java.awt.*;
 import java.util.TreeMap;
 import javax.swing.*;
 
+// gui skin lib import.
+import mdlaf.MaterialLookAndFeel;
+import mdlaf.themes.JMarsDarkTheme;
+
 public class ShowWindow extends JFrame {
 	JFrame f;
 	int width;
@@ -14,6 +18,17 @@ public class ShowWindow extends JFrame {
 	ShowWindow(){
 		width = 1200;
 		height = 700;
+
+		// setting gui skin. (MaterialLookAndFeel.)
+		try {
+            UIManager.setLookAndFeel(new MaterialLookAndFeel(new JMarsDarkTheme()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
+		setUIFont(new javax.swing.plaf.FontUIResource("맑은 고딕", Font.PLAIN, 16));
+
 		stockData = new StockData().getStockData();
 		searchPane = new SearchPane(stockData);
 		stockChart = new StockChart(searchPane);
@@ -56,6 +71,16 @@ public class ShowWindow extends JFrame {
 		split.setPreferredSize(new Dimension(width, height/2));
 		split.setDividerLocation(height/2);
 		return split;
+	}
+
+	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
+		java.util.Enumeration keys = UIManager.getDefaults().keys();
+		while (keys.hasMoreElements()) {
+			Object key = keys.nextElement();
+			Object value = UIManager.get(key);
+			if (value instanceof javax.swing.plaf.FontUIResource)
+				UIManager.put(key, f);
+		}
 	}
 	
 	public static void main(String args[]) {
