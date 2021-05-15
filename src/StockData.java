@@ -37,6 +37,9 @@ public class StockData { // read stock excel data
 				XSSFRow row = cospiSheet.getRow(i);
 				stockDataTreeMap.put(row.getCell(0).getStringCellValue(), row.getCell(1).getStringCellValue());
 			}
+
+			cosdaqWorkbook.close();
+			cospiWorkbook.close();
 		} catch(FileNotFoundException e) {
 			e.printStackTrace();
 		} catch(IOException e) {
