@@ -1,45 +1,44 @@
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.Component;
+
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 public class StockNews {
-	private JPanel chartPanel;
-	private JTextArea ta;
-	private String stockName;
-	private String stockCode;
+	private JPanel newsPanel;
+	private NewsDataModel newsModel;
+	private SearchPane parentPane;
 	
 	StockNews(final SearchPane searchPane) {
-		chartPanel = new JPanel();
-		ta = new JTextArea();
+		newsModel = new NewsDataModel(this);
+		NewsDataController newsDataEventListener = new NewsDataController(this, newsModel);
 		
-		searchPane.searchResults.addMouseListener(new MouseAdapter( ) {
-			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() == 2) {
-					// add action when searchResults' item is double-clicked
-					stockName = searchPane.getStockName();
-					stockCode = searchPane.getStockCode();
-					ta.append(stockName + "\n");
-					ta.append(stockCode + "\n");
-				}
-			}
-		});
+		newsPanel = new JPanel();
+		newsPanel.setAlignmentY(Component.LEFT_ALIGNMENT);
+		newsPanel.setLayout(new BoxLayout(newsPanel, BoxLayout.Y_AXIS));
 		
-		searchPane.stockBookmark.addMouseListener(new MouseAdapter( ) {
-			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() == 2) {
-					// add action when stockBookmark's item is double-clicked
-					stockName = searchPane.getStockName();
-					stockCode = searchPane.getStockCode();
-					ta.append(stockName + "\n");
-					ta.append(stockCode + "\n");
-				}
-			}
-		});
-		chartPanel.add(ta);
+		searchPane.searchResults.addMouseListener(newsDataEventListener);
+		searchPane.stockBookmark.addMouseListener(newsDataEventListener);
+		parentPane = searchPane;
 	}
 	
 	public JPanel getPanel() {
-		return chartPanel;
+		return newsPanel;
+	}
+
+	public String getStockName() {
+		return parentPane.getStockName();
+	}
+
+	void updateNewsData(String[] titles, String[] links, int display) {
+		newsPanel.removeAll();
+		newsPanel.revalidate();
+		newsPanel.repaint();
+
+		JLabel curLabel;
+		for (int i = 0; i < display; i++) {
+			curLabel = new JLabel(titles[i]);
+			newsPanel.add(curLabel);
+		}
 	}
 }
