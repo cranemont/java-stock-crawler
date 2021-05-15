@@ -26,8 +26,8 @@ public class SearchPane {
 	SearchPane(TreeMap<String, String> StockData){
 		searchPanel = new JPanel();
 		inputTextField = new JTextField(15);
-		addBookmark = new JButton("°ü½ÉÁ¾¸ñ Ãß°¡");
-		delBookmark = new JButton("°ü½ÉÁ¾¸ñ Á¦°Å");
+		addBookmark = new JButton("ê´€ì‹¬ì¢…ëª© ì¶”ê°€");
+		delBookmark = new JButton("ê´€ì‹¬ì¢…ëª© ì œê±°");
 		searchResults = new JList<String>();
 		stockBookmark = new JList<String>();
 		searchActionListener actionListners = new searchActionListener();
@@ -67,7 +67,7 @@ public class SearchPane {
 		JScrollPane scrollPane = new JScrollPane(searchResults);
 		scrollPane.setPreferredSize(new Dimension(200, 200));
 		searchPanel.setLayout(new FlowLayout());
-		searchPanel.add(new JLabel("Á¾¸ñ¸íÀ» ÀÔ·ÂÇÏ¼¼¿ä"));
+		searchPanel.add(new JLabel("ì¢…ëª©ëª…ì„ ì…ë ¥í•˜ì„¸ìš”"));
 		searchPanel.add(inputTextField);
 		searchPanel.add(addBookmark);
 		searchPanel.add(delBookmark);
