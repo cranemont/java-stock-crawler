@@ -1,42 +1,25 @@
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 public class StockChart {
 	private JPanel chartPanel;
-	private JTextArea ta;
-	private String stockName;
-	private String stockCode;
-	
+	private ChartDataCrawler cr;
+	private ChartView jfreeCandlestickChart;
+
 	StockChart(final SearchPane searchPane){
+
+		ChartDataController actionListener = new ChartDataController(this, searchPane);
 		chartPanel = new JPanel();
-		ta = new JTextArea(); 
+		cr = new ChartDataCrawler();
 		
-		searchPane.searchResults.addMouseListener(new MouseAdapter( ) {
-			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() == 2) {
-					// add action when searchResults' item is double-clicked
-					stockName = searchPane.getStockName();
-					stockCode = searchPane.getStockCode();
-					ta.append(stockName + "\n");
-					ta.append(stockCode + "\n");
-				}
-			}
-		});
-		
-		searchPane.stockBookmark.addMouseListener(new MouseAdapter( ) {
-			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() == 2) {
-					// add action when stockBookmark's item is double-clicked
-					stockName = searchPane.getStockName();
-					stockCode = searchPane.getStockCode();
-					ta.append(stockName + "\n");
-					ta.append(stockCode + "\n");
-				}
-			}
-		});
-		chartPanel.add(ta);
+		searchPane.searchResults.addMouseListener(actionListener);
+		searchPane.stockBookmark.addMouseListener(actionListener);
+	}
+	
+	public void updateChart(String stockName, String stockCode) {
+		chartPanel.removeAll();
+		jfreeCandlestickChart = new ChartView(stockName);
+        new ChartDataFeeder(cr, jfreeCandlestickChart, stockCode).drawDailyChart();
+        chartPanel.add(jfreeCandlestickChart);
 	}
 	
 	public JPanel getPanel() {
