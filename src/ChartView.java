@@ -54,6 +54,8 @@ public class ChartView extends JPanel{
         
         // Create candlestick chart renderer
         CandlestickRenderer candlestickRenderer = new CandlestickRenderer();
+        candlestickRenderer.setAutoWidthMethod(CandlestickRenderer.WIDTHMETHOD_SMALLEST);
+
         // Create candlestickSubplot
         XYPlot candlestickSubplot = new XYPlot(candlestickDataset, null, priceAxis, candlestickRenderer);
         candlestickSubplot.setBackgroundPaint(Color.white);
