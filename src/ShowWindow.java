@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.util.TreeMap;
 import javax.swing.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseAdapter;
 
 // gui skin lib import.
 import mdlaf.MaterialLookAndFeel;
@@ -40,13 +42,18 @@ public class ShowWindow extends JFrame {
 		
 		mb.add(settings);
 		mb.add(exit);
+
+		FrameDragListener frameMoveDragListener = new FrameDragListener();
+		mb.addMouseListener(frameMoveDragListener);
+		mb.addMouseMotionListener(frameMoveDragListener);
 		
 		f.setJMenuBar(mb);
 		f.setSize(width, height);
 		
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.add(SplitPanel(), BorderLayout.CENTER);
-		
+
+		f.setUndecorated(true);
 		f.setLocationByPlatform(true);
 		f.setVisible(true);
 		f.show();
@@ -80,6 +87,34 @@ public class ShowWindow extends JFrame {
 				UIManager.put(key, f);
 		}
 	}
+
+	private class FrameDragListener extends MouseAdapter {
+        private Point mouseOffset;
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            Component c = SwingUtilities.getRoot(e.getComponent());
+            Point mouseDownCoord = e.getLocationOnScreen();
+            if (SwingUtilities.isLeftMouseButton(e)) {
+                mouseOffset = new Point(mouseDownCoord.x - c.getX(), mouseDownCoord.y - c.getY());
+            }
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            Component c = SwingUtilities.getRoot(e.getComponent());
+
+            if (SwingUtilities.isLeftMouseButton(e)) {
+                Point currCoords = e.getLocationOnScreen();
+                c.setLocation(currCoords.x - mouseOffset.x, currCoords.y - mouseOffset.y);
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            mouseOffset = null;
+        }
+    }
 	
 	public static void main(String args[]) {
 		new ShowWindow();
