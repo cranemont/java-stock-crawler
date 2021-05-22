@@ -8,16 +8,14 @@ import mdlaf.themes.JMarsDarkTheme;
 
 public class ShowWindow extends JFrame {
 	JFrame f;
-	int width;
-	int height;
+	static public int width = 1200;
+	static public int height = 700;
 	TreeMap<String, String> stockData;
 	SearchPane searchPane;
 	StockChart stockChart;
 	StockNews stockNews;
 	
 	ShowWindow(){
-		width = 1200;
-		height = 700;
 
 		// setting gui skin. (MaterialLookAndFeel.)
 		try {
@@ -66,7 +64,7 @@ public class ShowWindow extends JFrame {
 	
 	private JSplitPane SplitByRow() { // left Panel(chart, news)
 		JPanel chart = stockChart.getPanel();
-		JPanel news = stockNews.getPanel();
+		JScrollPane news = stockNews.getPanel();
 		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, chart, news);
 		split.setPreferredSize(new Dimension(width, height/2));
 		split.setDividerLocation(height/2);
