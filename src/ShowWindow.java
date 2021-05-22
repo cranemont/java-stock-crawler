@@ -3,6 +3,8 @@ import java.util.TreeMap;
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 // gui skin lib import.
 import mdlaf.MaterialLookAndFeel;
@@ -38,7 +40,9 @@ public class ShowWindow extends JFrame {
 		
 		JMenuBar mb = new JMenuBar();
 		JMenu settings = new JMenu("Settings");
-		JMenu exit = new JMenu("Exit");
+		JMenuItem exit = new JMenuItem("Exit");
+		exit.addActionListener(new MenuClickListener());
+		exit.setActionCommand("exit");
 		
 		mb.add(settings);
 		mb.add(exit);
@@ -115,7 +119,24 @@ public class ShowWindow extends JFrame {
             mouseOffset = null;
         }
     }
+
+	private class MenuClickListener implements ActionListener {
 	
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String s = e.getActionCommand();
+			
+			if (s.equals("exit")) {
+				disposeFrame();
+			}
+		}
+	
+		private void disposeFrame() {
+			f.setVisible(false);
+			f.dispose();
+		}
+	}
+
 	public static void main(String args[]) {
 		new ShowWindow();
 	}
