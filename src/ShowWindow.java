@@ -39,13 +39,16 @@ public class ShowWindow extends JFrame {
 		f = new JFrame("Stock Information");
 		
 		JMenuBar mb = new JMenuBar();
+		JMenu menu = new JMenu("Menu");
 		JMenu settings = new JMenu("Settings");
 		JMenuItem exit = new JMenuItem("Exit");
+		
 		exit.addActionListener(new MenuClickListener());
 		exit.setActionCommand("exit");
+		menu.add(exit);
 		
+		mb.add(menu);
 		mb.add(settings);
-		mb.add(exit);
 
 		FrameDragListener frameMoveDragListener = new FrameDragListener();
 		mb.addMouseListener(frameMoveDragListener);
