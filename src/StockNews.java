@@ -1,6 +1,8 @@
 import java.awt.Component;
 import java.net.URI;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import javax.swing.*;
 
@@ -9,6 +11,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 
 import java.util.Date;
+import java.util.Locale;
 
 public class StockNews {
 	private JScrollPane newsScorllPane;
@@ -23,7 +26,7 @@ public class StockNews {
 		
 		newsMainPanel = new JPanel();
 		newsMainPanel.setLayout(new BoxLayout(newsMainPanel, BoxLayout.Y_AXIS));
-		newsMainPanel.setAlignmentY(Component.LEFT_ALIGNMENT);
+		newsMainPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		newsMainPanel.setMaximumSize(new Dimension(860, 350));
 
 		newsScorllPane = new JScrollPane(newsMainPanel,
@@ -61,7 +64,6 @@ public class StockNews {
 
 	class NewsPanel extends JPanel {
 		private JTextArea dateTA;
-		private Date date;
 		private JTextArea titleTA;
 		private JTextArea descTA;
 		private URI browseURI;
@@ -91,7 +93,7 @@ public class StockNews {
 			descTA.setLineWrap(true);
 			descTA.setBackground(primaryback);
 
-			Font NanumDateFont = NanumFont.deriveFont(10f);
+			Font NanumDateFont = NanumFont.deriveFont(12f);
 			dateTA = new JTextArea();
 			dateTA.setFont(NanumDateFont);
 			dateTA.setEditable(false);
@@ -106,26 +108,34 @@ public class StockNews {
 			browseTA.setBackground(primaryback);
 			browseTA.setEditable(false);
 			browseTA.addMouseListener(new browseButtonClickListener());
+			browseTA.setForeground(Color.orange);
 			
 			add(titleTA);
 			add(dateTA);
 			add(descTA);
 			add(browseTA);
 		}
-
-		public void updateNews(String title, String desc, String date, String link) {
+		
+		public void updateNews(String title, String desc, String datestr, String link) {
 			titleTA.setText(title);
 			descTA.setText(desc);
-			dateTA.setText(date);
-			browseTA.setText("[더 보기]");
+			
 			try {
+				dateTA.setText(modifyDateLayout(datestr));
 				browseURI = new URL(link).toURI();
+				browseTA.setText("[더 보기]");
 			} catch (java.net.MalformedURLException e) {
 				JOptionPane.showMessageDialog(null, link + " is MalformedURL!", "URL error", JOptionPane.ERROR_MESSAGE);
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
+			
+		}
+
+		private String modifyDateLayout(String dateStr) throws java.text.ParseException {
+			Date date = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US).parse(dateStr);
+			return new SimpleDateFormat("[MMM dd, yyyy HH:mm]").format(date);
 		}
 
 		private class browseButtonClickListener implements MouseListener {
