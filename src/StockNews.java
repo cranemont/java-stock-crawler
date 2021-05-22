@@ -62,6 +62,7 @@ public class StockNews {
 			setAlignmentY(Component.LEFT_ALIGNMENT);
 			setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
+			Color primaryback = UIManager.getColor("Panel.background");
 			Font NanumFont = FontController.loadFontFile("NanumBarunGothic.ttf");
 			Font NanumBoldFont = FontController.loadFontFile("NanumBarunGothicBold.ttf");
 			FontController.registerFont(NanumFont);
@@ -72,6 +73,7 @@ public class StockNews {
 			titleTA.setEditable(false);
 			titleTA.setWrapStyleWord(true);
 			titleTA.setLineWrap(true);
+			titleTA.setBackground(primaryback);
 
 			Font NanumDescFont = NanumFont.deriveFont(12f);
 			descTA = new JTextArea();
@@ -79,6 +81,7 @@ public class StockNews {
 			descTA.setEditable(false);
 			descTA.setWrapStyleWord(true);
 			descTA.setLineWrap(true);
+			descTA.setBackground(primaryback);
 
 			add(titleTA);
 			add(descTA);
