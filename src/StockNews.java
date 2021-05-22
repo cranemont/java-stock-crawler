@@ -1,6 +1,13 @@
 import java.awt.Component;
+import java.net.URI;
+import java.net.URL;
+
 import javax.swing.*;
+
 import java.awt.*;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
+
 import java.util.Date;
 
 public class StockNews {
@@ -21,6 +28,7 @@ public class StockNews {
 
 		newsScorllPane = new JScrollPane(newsMainPanel,
 			JScrollPane.VERTICAL_SCROLLBAR_ALWAYS ,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		newsScorllPane.getVerticalScrollBar().setUnitIncrement(20);
 		
 		searchPane.searchResults.addMouseListener(newsDataEventListener);
 		searchPane.stockBookmark.addMouseListener(newsDataEventListener);
@@ -46,28 +54,28 @@ public class StockNews {
 			String title = model.items[i].title;
 			String desc = model.items[i].description;
 			String date = model.items[i].pubDate;
-			newsPanes[i].updateNews(title, desc, date);
+			String link = model.items[i].originallink;
+			newsPanes[i].updateNews(title, desc, date, link);
 		}
 	}
 
 	class NewsPanel extends JPanel {
-		private JLabel dateLbl;
+		private JTextArea dateTA;
 		private Date date;
 		private JTextArea titleTA;
-		private String title;
 		private JTextArea descTA;
-		private String desc;
+		private URI browseURI;
+		private JTextArea browseTA;
 
 		NewsPanel() {
-			setAlignmentY(Component.LEFT_ALIGNMENT);
-			setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+			setAlignmentX(JPanel.LEFT_ALIGNMENT);
 
 			Color primaryback = UIManager.getColor("Panel.background");
 			Font NanumFont = FontController.loadFontFile("NanumBarunGothic.ttf");
 			Font NanumBoldFont = FontController.loadFontFile("NanumBarunGothicBold.ttf");
-			FontController.registerFont(NanumFont);
 
-			Font NanumTitleFont = NanumBoldFont.deriveFont(16f);
+			Font NanumTitleFont = NanumBoldFont.deriveFont(18f);
 			titleTA = new JTextArea();
 			titleTA.setFont(NanumTitleFont);
 			titleTA.setEditable(false);
@@ -75,7 +83,7 @@ public class StockNews {
 			titleTA.setLineWrap(true);
 			titleTA.setBackground(primaryback);
 
-			Font NanumDescFont = NanumFont.deriveFont(12f);
+			Font NanumDescFont = NanumFont.deriveFont(14f);
 			descTA = new JTextArea();
 			descTA.setFont(NanumDescFont);
 			descTA.setEditable(false);
@@ -83,14 +91,85 @@ public class StockNews {
 			descTA.setLineWrap(true);
 			descTA.setBackground(primaryback);
 
+			Font NanumDateFont = NanumFont.deriveFont(10f);
+			dateTA = new JTextArea();
+			dateTA.setFont(NanumDateFont);
+			dateTA.setEditable(false);
+			dateTA.setWrapStyleWord(true);
+			dateTA.setLineWrap(true);
+			dateTA.setBackground(primaryback);
+			dateTA.setForeground(Color.CYAN);
+
+			Font NanumBrowseFont = NanumFont.deriveFont(12f);
+			browseTA = new JTextArea();
+			browseTA.setFont(NanumBrowseFont);
+			browseTA.setBackground(primaryback);
+			browseTA.setEditable(false);
+			browseTA.addMouseListener(new browseButtonClickListener());
+			
 			add(titleTA);
+			add(dateTA);
 			add(descTA);
+			add(browseTA);
 		}
 
-		public void updateNews(String title, String desc, String date) {
+		public void updateNews(String title, String desc, String date, String link) {
 			titleTA.setText(title);
 			descTA.setText(desc);
+			dateTA.setText(date);
+			browseTA.setText("[더 보기]");
+			try {
+				browseURI = new URL(link).toURI();
+			} catch (java.net.MalformedURLException e) {
+				JOptionPane.showMessageDialog(null, link + " is MalformedURL!", "URL error", JOptionPane.ERROR_MESSAGE);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
 		}
+
+		private class browseButtonClickListener implements MouseListener {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					if (e.getButton() == MouseEvent.BUTTON1
+					&&  Desktop.isDesktopSupported()) {
+						Desktop.getDesktop().browse(browseURI);
+					}
+				}
+				catch (Exception ex){
+					ex.printStackTrace();
+					System.exit(1);
+				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+				browseTA.setCursor(cursor);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				browseTA.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));	
+			}
+
+
+		} 
 		
+
 	}
 }
