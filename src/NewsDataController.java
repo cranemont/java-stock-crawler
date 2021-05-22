@@ -3,13 +3,15 @@ import java.awt.event.MouseListener;
 
 public class NewsDataController implements MouseListener{
     private final NewsCrawler crawler;
-    private final NewsDataModel model;
+    private final NewsDataParser parser;
     private final StockNews stockNews;
+    private NewsDataModel model;
 
     NewsDataController(StockNews view, NewsDataModel model) {
         crawler = new NewsCrawler();
         this.model = model;
         this.stockNews = view;
+        this.parser = new NewsDataParser();
     }
 
     @Override
@@ -17,7 +19,9 @@ public class NewsDataController implements MouseListener{
         if(e.getClickCount() == 2) {
             // add action when searchResults' item is double-clicked
             String stockName = stockNews.getStockName();
-            model.updateJson(crawler.searchNews(stockName, "sim"));
+            parser.parseJson(crawler.searchNews(stockName, "sim"));
+            model = parser.getDataModel();
+            stockNews.updateNewsData(model);
         }
     }
 
