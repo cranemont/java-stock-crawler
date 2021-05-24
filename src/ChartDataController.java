@@ -17,8 +17,6 @@ public class ChartDataController implements MouseListener{
 		if(e.getClickCount() == 2) {
 			// add action when searchResults' item is double-clicked
 			view.updateChart(searchPane.getStockName(), searchPane.getStockCode());
-			//show dailyChart
-			//if button pushed, show realtimeChart
 		}
 	}
 

@@ -1,4 +1,5 @@
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class StockChart {
 	private JPanel chartPanel;
@@ -18,8 +19,10 @@ public class StockChart {
 	public void updateChart(String stockName, String stockCode) {
 		chartPanel.removeAll();
 		jfreeCandlestickChart = new ChartView(stockName);
-        new ChartDataFeeder(cr, jfreeCandlestickChart, stockCode).drawDailyChart();
+		jfreeCandlestickChart.resize(chartPanel.getSize().height - 20);
+		new ChartDataFeeder(cr, jfreeCandlestickChart, stockCode).drawDailyChart();
         chartPanel.add(jfreeCandlestickChart);
+        SwingUtilities.updateComponentTreeUI(chartPanel);
 	}
 	
 	public JPanel getPanel() {

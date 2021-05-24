@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.util.TreeMap;
 import javax.swing.*;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.ActionListener;
@@ -59,7 +60,7 @@ public class ShowWindow extends JFrame {
 		
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.add(SplitPanel(), BorderLayout.CENTER);
-
+		
 		f.setUndecorated(true);
 		f.setLocationByPlatform(true);
 		f.setVisible(true);
@@ -77,7 +78,8 @@ public class ShowWindow extends JFrame {
 	}
 	
 	private JSplitPane SplitByRow() { // left Panel(chart, news)
-		JPanel chart = stockChart.getPanel();
+		JPanel chart = stockChart.getPanel(); // 
+		chart.addComponentListener(new DividerMoveListener());
 		JScrollPane news = stockNews.getPanel();
 		JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, chart, news);
 		split.setPreferredSize(new Dimension(width, height/2));

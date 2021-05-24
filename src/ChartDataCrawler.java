@@ -1,8 +1,5 @@
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import org.jsoup.*;
 import org.jsoup.nodes.*;
@@ -10,27 +7,21 @@ import org.jsoup.select.*;
 
 public class ChartDataCrawler {
 	private String dailyURL;
-	private String realtimeURL;
 	private String selector;
 	private String page = null;
 	private Document dailyDoc = null;
-	private Document realtimeDoc = null;
 	private ArrayList<String[]> stockDataValues;
+	private int fetchPageMax;
 	
 	ChartDataCrawler(){
-//		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-//		Date time = new Date();
-//		String currentTime = format.format(time);
-//		currentTime += "180000";
 		this.stockDataValues = new ArrayList<String[]>();
 		this.page = "&page=";
 		this.selector = "span.tah";
-//		this.stockCode = stockCode;
-//		dailyURL = "https://finance.naver.com/item/sise_day.nhn?code=" + stockCode;
-//		realtimeURL = "https://finance.naver.com/item/sise_time.nhn?code=" + stockCode + "&thistime=20210517180000";// + currentTime;
-
-//		dailyDoc = getDoc(dailyURL);
-//		realtimeDoc = getDoc(realtimeURL);
+		fetchPageMax = 23;
+	}
+	
+	public void setFetchPage(int pages) {
+		this.fetchPageMax = pages;
 	}
 	
 	public void fetchDailyStockData(String stockCode) {
@@ -41,7 +32,7 @@ public class ChartDataCrawler {
 		
 		Elements values = dailyDoc.select(selector);
 		String[] str = new String[7];
-		while(values.size() == 70 && pages < 28) {
+		while(values.size() == 70 && pages < fetchPageMax) {
 			int idx = 0;
 			for(Element el: values) {
 				str[idx++] = el.text();
@@ -59,19 +50,6 @@ public class ChartDataCrawler {
 	
 	public ArrayList<String[]> getDailyStockData(){
 		return this.stockDataValues;
-	}
-	
-	public String getRealtimeStockData() {
-		int pages = 2;
-		String stockDataValues = "";
-		Elements values = realtimeDoc.select(selector);
-		while(values.size()/7 == 10 && pages <= 40) {
-			stockDataValues += values.text() + "|";
-			realtimeDoc = getDoc(realtimeURL + page + pages);
-			values = realtimeDoc.select(selector);
-			pages += 1;
-		}
-		return stockDataValues;
 	}
 	
 	public Document getDoc(String url) {
