@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import javax.swing.SwingWorker;
 
 public class ChartDataFeeder {
 	private ChartDataCrawler crawler;
@@ -17,6 +16,24 @@ public class ChartDataFeeder {
 	public void parseData() {
 		crawler.fetchDailyStockData(stockCode);
 		this.dailyData = crawler.getDailyStockData();
+		
+		// processing suspended stocks data
+		int flag = 0;
+		int idx = 0;
+		String[] prev = null;
+		for(String[] str: dailyData) {
+			if(flag == 1) {
+				prev[3] = str[1];
+				prev[4] = str[1];
+				prev[5] = str[1];
+				flag = 0;
+			}
+			if(str[3].equals("0") && idx != dailyData.size()-1) {
+				prev = str;
+				flag = 1;
+			}
+			idx++;
+		}
 	}
 	
 	public void dailyDataPrinter() {
@@ -32,31 +49,6 @@ public class ChartDataFeeder {
 		for(String[] str: dailyData) {
 			chartModel.addCandel(str);
 		}
+		chartModel.addMovingAverage();
 	}
-	
-//	public void showDailyChartUsingSwingWorker() {
-//		BackgroundTask task = new BackgroundTask(chartModel);
-//		task.execute();
-//	}
-//
-//	
-//	private class BackgroundTask extends SwingWorker<Integer, Integer>{
-//
-//		private ChartView model;
-////		private ArrayList<String[]> dailyData;
-//		BackgroundTask(ChartView model){
-//			this.model = model;
-////			this.dailyData = dailyData;
-//		}
-//		
-//		@Override
-//		protected Integer doInBackground() throws Exception {
-//			// TODO Auto-generated method stub
-////			model.addCandel(); //add data from dailyData
-//			for(String[] str: dailyData) {
-//				model.addCandel(str);
-//			}
-//			return null;
-//		}
-//	}
 }

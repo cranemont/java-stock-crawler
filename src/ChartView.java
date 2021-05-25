@@ -15,6 +15,7 @@ import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.CandlestickRenderer;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.time.*;
 import org.jfree.data.time.ohlc.OHLCSeries;
@@ -26,6 +27,7 @@ import java.text.ParseException;
 public class ChartView extends JPanel{
 	private OHLCSeries ohlcSeries;
 	private TimeSeries volumeSeries;
+	private TimeSeries timeSeries;
 	private static final DateFormat df = new SimpleDateFormat("yyyy.MM.dd");
 	private double open = 0.0;
     private double close = 0.0;
@@ -34,15 +36,22 @@ public class ChartView extends JPanel{
     private double volume = 0.0;
     private String stockName;
     private JFreeChart chart;
+    
+    private TimeSeries maDataset;
+    private XYPlot candlestickSubplot;
+    
+    private TimeSeriesCollection movingAvg20Dataset;
+    private TimeSeriesCollection movingAvg60Dataset;
+    private TimeSeriesCollection movingAvg120Dataset;
+    
     final ChartPanel chartPanel;
     
 	ChartView(String stockName){
 		this.stockName = stockName;
 		final JFreeChart candlestickChart = createChart();
+		
 		chartPanel = new ChartPanel(candlestickChart);
-
         chartPanel.setPreferredSize(new Dimension(900, 320));
-        // Enable zooming
         chartPanel.setMouseZoomable(true);
         chartPanel.setMouseWheelEnabled(true);
         add(chartPanel, BorderLayout.CENTER);
@@ -62,6 +71,11 @@ public class ChartView extends JPanel{
         
         CandlestickRenderer candlestickRenderer = new CandlestickRenderer();
         candlestickRenderer.setAutoWidthMethod(CandlestickRenderer.WIDTHMETHOD_SMALLEST);
+
+        candlestickSubplot = new XYPlot(candleStickDataset, null, candleStickYAxis, candlestickRenderer);
+        candlestickSubplot.setBackgroundPaint(Color.white);
+        candlestickSubplot.setRangePannable(true);
+        
         
         // create volume subplot
         TimeSeriesCollection volumeDataset = new TimeSeriesCollection();
@@ -75,17 +89,22 @@ public class ChartView extends JPanel{
         
         XYBarRenderer timeRenderer = new XYBarRenderer();
         timeRenderer.setShadowVisible(false);
+        timeRenderer.setSeriesPaint(0, Color.blue);
         timeRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator("{1} | 거래량={2}",
                 new SimpleDateFormat("yy년 MM월 dd일"), new DecimalFormat("0")));
-        
-        
-        XYPlot candlestickSubplot = new XYPlot(candleStickDataset, null, candleStickYAxis, candlestickRenderer);
-        candlestickSubplot.setBackgroundPaint(Color.white);
         
         XYPlot volumeSubplot = new XYPlot(volumeDataset, null, volumeYAxis, timeRenderer);
         volumeSubplot.setBackgroundPaint(Color.white);
         
-    
+        
+        // create moving average
+        movingAvg20Dataset = new TimeSeriesCollection();
+        movingAvg60Dataset = new TimeSeriesCollection();
+        movingAvg120Dataset = new TimeSeriesCollection();
+        timeSeries = new TimeSeries("MVA");
+        
+        
+        // combine charts
         DateAxis dateAxis = new DateAxis();
         SegmentedTimeline timeline = SegmentedTimeline.newMondayThroughFridayTimeline();
         dateAxis.setTimeline(timeline);
@@ -98,7 +117,6 @@ public class ChartView extends JPanel{
         mainPlot.add(volumeSubplot, 1);
         
         chart = new JFreeChart(stockName, JFreeChart.DEFAULT_TITLE_FONT, mainPlot, true);
-        chart.removeLegend();
         chart.getTitle().setPaint(Color.white);
         return chart;
 	}
@@ -111,11 +129,36 @@ public class ChartView extends JPanel{
 			low = Double.parseDouble(trade[5].replace(",", ""));
 			close = Double.parseDouble(trade[1].replace(",", ""));
 			volume = Double.parseDouble(trade[6].replace(",", ""));
+
 			ohlcSeries.add(new Day(date), open, high, low, close);
 			volumeSeries.add(new Day(date), volume);
+			timeSeries.add(new Day(date), close);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void addMovingAverage() {
+        maDataset = MovingAverage.createMovingAverage(timeSeries, "MA20", 20, 0);
+        movingAvg20Dataset.addSeries(maDataset);
+		candlestickSubplot.setDataset(1, movingAvg20Dataset);
+		StandardXYItemRenderer renderer20 = new StandardXYItemRenderer();
+		renderer20.setSeriesPaint(0, Color.orange);
+        candlestickSubplot.setRenderer(1, renderer20);
+        
+        maDataset = MovingAverage.createMovingAverage(timeSeries, "MA60", 60, 0);
+        movingAvg60Dataset.addSeries(maDataset);
+		candlestickSubplot.setDataset(2, movingAvg60Dataset);
+		StandardXYItemRenderer renderer60 = new StandardXYItemRenderer();
+		renderer60.setSeriesPaint(0, Color.BLUE);
+        candlestickSubplot.setRenderer(2, renderer60);
+        
+        maDataset = MovingAverage.createMovingAverage(timeSeries, "MA120", 120, 0);
+        movingAvg120Dataset.addSeries(maDataset);
+		candlestickSubplot.setDataset(3, movingAvg120Dataset);
+		StandardXYItemRenderer renderer120 = new StandardXYItemRenderer();
+		renderer120.setSeriesPaint(0, Color.RED);
+        candlestickSubplot.setRenderer(3, renderer120);
 	}
 	
 	public void resize(int height) {
