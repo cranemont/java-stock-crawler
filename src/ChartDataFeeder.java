@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import javax.swing.SwingWorker;
 
 public class ChartDataFeeder {
 	private ChartDataCrawler crawler;
@@ -50,31 +49,6 @@ public class ChartDataFeeder {
 		for(String[] str: dailyData) {
 			chartModel.addCandel(str);
 		}
+		chartModel.addMovingAverage();
 	}
-	
-//	public void showDailyChartUsingSwingWorker() {
-//		BackgroundTask task = new BackgroundTask(chartModel);
-//		task.execute();
-//	}
-//
-//	
-//	private class BackgroundTask extends SwingWorker<Integer, Integer>{
-//
-//		private ChartView model;
-////		private ArrayList<String[]> dailyData;
-//		BackgroundTask(ChartView model){
-//			this.model = model;
-////			this.dailyData = dailyData;
-//		}
-//		
-//		@Override
-//		protected Integer doInBackground() throws Exception {
-//			// TODO Auto-generated method stub
-////			model.addCandel(); //add data from dailyData
-//			for(String[] str: dailyData) {
-//				model.addCandel(str);
-//			}
-//			return null;
-//		}
-//	}
 }
