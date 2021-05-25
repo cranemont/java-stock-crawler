@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.bouncycastle.util.Arrays;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
@@ -32,10 +33,15 @@ public class ChartDataCrawler {
 		
 		Elements values = dailyDoc.select(selector);
 		String[] str = new String[7];
-		while(values.size() == 70 && pages < fetchPageMax) {
+		String prev = "previous page Date";
+		String cur = "current page Date";
+		while(pages < fetchPageMax && !(prev.equals(cur))) {
+			prev = values.get(0).text();
+			
 			int idx = 0;
 			for(Element el: values) {
 				str[idx++] = el.text();
+				
 				if(idx == 7) {
 					this.stockDataValues.add(str);
 					str = new String[7];
@@ -44,6 +50,7 @@ public class ChartDataCrawler {
 			}
 			dailyDoc = getDoc(dailyURL + page + pages);
 			values = dailyDoc.select(selector);
+			cur = values.get(0).text();
 			pages += 1;
 		}
 	}

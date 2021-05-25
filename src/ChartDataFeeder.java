@@ -17,6 +17,24 @@ public class ChartDataFeeder {
 	public void parseData() {
 		crawler.fetchDailyStockData(stockCode);
 		this.dailyData = crawler.getDailyStockData();
+		
+		// processing suspended stocks data
+		int flag = 0;
+		int idx = 0;
+		String[] prev = null;
+		for(String[] str: dailyData) {
+			if(flag == 1) {
+				prev[3] = str[1];
+				prev[4] = str[1];
+				prev[5] = str[1];
+				flag = 0;
+			}
+			if(str[3].equals("0") && idx != dailyData.size()-1) {
+				prev = str;
+				flag = 1;
+			}
+			idx++;
+		}
 	}
 	
 	public void dailyDataPrinter() {
