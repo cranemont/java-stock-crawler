@@ -1,7 +1,6 @@
 import java.awt.Component;
 import java.net.URI;
 import java.net.URL;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import javax.swing.*;
@@ -168,13 +167,14 @@ public class StockNews {
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
-				browseTA.setCursor(cursor);
+				Component c = SwingUtilities.getRoot(browseTA);
+				c.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				browseTA.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));	
+				Component c = SwingUtilities.getRoot(browseTA);
+				c.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 
 
