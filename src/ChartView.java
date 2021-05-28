@@ -40,9 +40,7 @@ public class ChartView extends JPanel{
     private TimeSeries maDataset;
     private XYPlot candlestickSubplot;
     
-    private TimeSeriesCollection movingAvg20Dataset;
-    private TimeSeriesCollection movingAvg60Dataset;
-    private TimeSeriesCollection movingAvg120Dataset;
+    private TimeSeriesCollection[] movingAvgDataset;
     
     final ChartPanel chartPanel;
     
@@ -98,9 +96,10 @@ public class ChartView extends JPanel{
         
         
         // create moving average
-        movingAvg20Dataset = new TimeSeriesCollection();
-        movingAvg60Dataset = new TimeSeriesCollection();
-        movingAvg120Dataset = new TimeSeriesCollection();
+        movingAvgDataset = new TimeSeriesCollection[3];
+        for(int i=0; i<3; i++) {
+        	movingAvgDataset[i] = new TimeSeriesCollection();
+        }
         timeSeries = new TimeSeries("MVA");
         
         
@@ -138,28 +137,25 @@ public class ChartView extends JPanel{
 		}
 	}
 	
-	public void addMovingAverage() {
-        maDataset = MovingAverage.createMovingAverage(timeSeries, "MA20", 20, 0);
-        movingAvg20Dataset.addSeries(maDataset);
-		candlestickSubplot.setDataset(1, movingAvg20Dataset);
-		StandardXYItemRenderer renderer20 = new StandardXYItemRenderer();
-		renderer20.setSeriesPaint(0, Color.orange);
-        candlestickSubplot.setRenderer(1, renderer20);
-        
-        maDataset = MovingAverage.createMovingAverage(timeSeries, "MA60", 60, 0);
-        movingAvg60Dataset.addSeries(maDataset);
-		candlestickSubplot.setDataset(2, movingAvg60Dataset);
-		StandardXYItemRenderer renderer60 = new StandardXYItemRenderer();
-		renderer60.setSeriesPaint(0, Color.BLUE);
-        candlestickSubplot.setRenderer(2, renderer60);
-        
-        maDataset = MovingAverage.createMovingAverage(timeSeries, "MA120", 120, 0);
-        movingAvg120Dataset.addSeries(maDataset);
-		candlestickSubplot.setDataset(3, movingAvg120Dataset);
-		StandardXYItemRenderer renderer120 = new StandardXYItemRenderer();
-		renderer120.setSeriesPaint(0, Color.RED);
-        candlestickSubplot.setRenderer(3, renderer120);
+	public void addMovingAverage(int id, int period) {
+        maDataset = MovingAverage.createMovingAverage(timeSeries, "MA"+period, period, 0);
+        movingAvgDataset[id].addSeries(maDataset);
+		candlestickSubplot.setDataset(id+1, movingAvgDataset[id]);
+		StandardXYItemRenderer renderer = new StandardXYItemRenderer();
+		switch(id) {
+		case 0:
+			renderer.setSeriesPaint(0, Color.orange);
+			break;
+		case 1:
+			renderer.setSeriesPaint(0, Color.BLUE);
+			break;
+		case 2:
+			renderer.setSeriesPaint(0, Color.RED);
+			break;
+		}
+        candlestickSubplot.setRenderer(id+1, renderer);
 	}
+	
 	
 	public void resize(int height) {
 		if(height > 100) {

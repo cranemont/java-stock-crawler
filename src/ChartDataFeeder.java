@@ -54,16 +54,27 @@ public class ChartDataFeeder {
 	}
 
 	public void runMovingAverageDrawingThread() {
-		BackgroundTask task = new BackgroundTask();
-		task.execute();
+		BackgroundTask ma20 = new BackgroundTask(0, 20);
+		BackgroundTask ma60 = new BackgroundTask(1, 60);
+		BackgroundTask ma120 = new BackgroundTask(2, 120);
+		ma20.execute();
+		ma60.execute();
+		ma120.execute();
 	}
-
 	
 	private class BackgroundTask extends SwingWorker<Integer, Integer>{
-
+		
+		private int id;
+		private int period;
+		
+		BackgroundTask(int id, int period){
+			this.id = id;
+			this.period = period;
+		}
+		
 		@Override
 		protected Integer doInBackground() throws Exception {
-			chartModel.addMovingAverage();
+			chartModel.addMovingAverage(id, period);
 			return null;
 		}
 	}
