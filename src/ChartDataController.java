@@ -15,7 +15,7 @@ public class ChartDataController implements MouseListener{
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getClickCount() == 2) {
-			// add action when searchResults' item is double-clicked
+			// add action when items are double-clicked
 			view.updateChart(searchPane.getStockName(), searchPane.getStockCode());
 		}
 	}
