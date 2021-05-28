@@ -22,6 +22,8 @@ public class StockChart {
 		jfreeCandlestickChart.resize(chartPanel.getSize().height - 20);
 		new ChartDataFeeder(cr, jfreeCandlestickChart, stockCode).drawDailyChart();
         chartPanel.add(jfreeCandlestickChart);
+        
+        // update GUI
         SwingUtilities.updateComponentTreeUI(chartPanel);
 	}
 	
